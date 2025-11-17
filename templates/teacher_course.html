@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% block content %}
+<h1>{{ course.code }} — {{ course.title }}</h1>
+<table>
+<thead><tr><th>Student</th><th>Grade</th><th>Update</th></tr></thead><tbody>
+{% for e in roster %}
+<tr>
+  <td>{{ e.student.username }}</td>
+  <td>{{ e.grade or '-' }}</td>
+  <td>
+    <form method='post' action='{{ url_for('teacher_grade', course_id=course.id) }}'>
+      <input type='hidden' name='student_id' value='{{ e.student_id }}'>
+      <input name='grade' value='{{ e.grade or '' }}' placeholder='A / B+ / 95'>
+      <button type='submit'>Save</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+</tbody></table>
+{% endblock %}

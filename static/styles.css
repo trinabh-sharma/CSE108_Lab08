@@ -1,0 +1,13 @@
+*{box-sizing:border-box}body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0f1115;color:#e6e6e6}
+a{color:#8ab4f8;text-decoration:none}.container{max-width:980px;margin:32px auto;padding:0 16px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#151820;border-bottom:1px solid #222}
+.brand a{font-weight:700}.pill{background:#222;padding:4px 10px;border-radius:999px;margin-right:8px}
+.btn{display:inline-block;padding:8px 12px;border:1px solid #333;border-radius:10px}
+.card{display:grid;gap:12px;background:#151820;padding:16px;border:1px solid #222;border-radius:12px;max-width:360px}
+input,button{width:100%;padding:10px;border-radius:10px;border:1px solid #333;background:#0f1115;color:#e6e6e6}
+button{cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}
+table{width:100%;border-collapse:collapse;margin:16px 0}th,td{border-bottom:1px solid #222;padding:10px 8px;text-align:left}
+.flash{margin:16px 0;display:grid;gap:8px}.flash-item{padding:10px 12px;border-radius:10px}
+.flash-item.success{background:#0f2e18;border:1px solid #165b31}.flash-item.error{background:#2b1313;border:1px solid #5b1616}
+.flash-item.warning{background:#2a1e0a;border:1px solid #5b4b16}.flash-item.info{background:#142336;border:1px solid #16365b}
+.muted{opacity:.75}.list{list-style:none;padding:0;display:grid;gap:8px}.hero{padding:40px;background:#151820;border:1px solid #222;border-radius:12px}

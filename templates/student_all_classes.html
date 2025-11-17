@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% block content %}
+<h1>All Classes</h1>
+<table>
+<thead><tr><th>Code</th><th>Title</th><th>Teacher</th><th>Capacity</th><th>Enrolled</th><th>Action</th></tr></thead>
+<tbody>
+{% for c in courses %}{% set cnt = counts.get(c.id, 0) %}
+<tr>
+  <td>{{ c.code }}</td><td>{{ c.title }}</td><td>{{ c.teacher.username }}</td>
+  <td>{{ c.capacity }}</td><td>{{ cnt }}</td>
+  <td>
+    {% if current_user.is_authenticated and current_user.role == 'student' %}
+      <form method='post' action='{{ url_for('student_enroll', course_id=c.id) }}'>
+        <button type='submit' {% if cnt >= c.capacity %}disabled{% endif %}>
+          {% if cnt >= c.capacity %}Full{% else %}Enroll{% endif %}
+        </button>
+      </form>
+    {% else %}<span class='muted'>Login as student</span>{% endif %}
+  </td>
+</tr>
+{% endfor %}
+</tbody></table>
+{% endblock %}

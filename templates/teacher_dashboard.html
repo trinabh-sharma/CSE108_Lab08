@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Your Courses</h1>
+{% if courses %}<ul class='list'>
+{% for c in courses %}<li><a class='btn' href='{{ url_for('teacher_course', course_id=c.id) }}'>{{ c.code }} — {{ c.title }}</a></li>{% endfor %}
+</ul>{% else %}<p class='muted'>No assigned courses.</p>{% endif %}
+{% endblock %}

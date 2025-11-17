@@ -1,0 +1,31 @@
+<!doctype html>
+<html><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>ACME University</title>
+<link rel='stylesheet' href='{{ url_for('static', filename='styles.css') }}'>
+</head><body>
+<header class='nav'>
+  <div class='brand'><a href='{{ url_for('home') }}'>ACME University</a></div>
+  <nav>
+    {% if current_user.is_authenticated %}
+      <span class='pill'>{{ current_user.username }} ({{ current_user.role }})</span>
+      {% if current_user.role == 'student' %}
+        <a href='{{ url_for('student_my_classes') }}'>My Classes</a>
+        <a href='{{ url_for('student_all_classes') }}'>All Classes</a>
+      {% elif current_user.role == 'teacher' %}
+        <a href='{{ url_for('teacher_dashboard') }}'>Teacher</a>
+      {% else %}
+        <a href='/admin'>Admin</a>
+      {% endif %}
+      <a href='{{ url_for('logout') }}'>Logout</a>
+    {% else %}
+      <a href='{{ url_for('login') }}'>Login</a>
+    {% endif %}
+  </nav>
+</header>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}<div class='flash'>
+  {% for cat, msg in messages %}<div class='flash-item {{ cat }}'>{{ msg }}</div>{% endfor %}
+</div>{% endif %}{% endwith %}
+<main class='container'>{% block content %}{% endblock %}</main>
+</body></html>
