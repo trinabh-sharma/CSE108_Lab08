@@ -1,0 +1,60 @@
+{% extends admin_base_template %}
+
+{% block head_css %}
+  {{ super() }}
+  <link rel='stylesheet' href='{{ url_for('static', filename='styles.css') }}'>
+{% endblock %}
+
+{% macro flattened_menu(menu_items) %}
+  {% for item in menu_items %}
+    {% if item.is_category() %}
+      {{ flattened_menu(item.get_children()) }}
+    {% elif item.is_accessible() and item.is_visible() %}
+      <li>
+        <a class='btn{% if item.is_active(admin_view) %} active{% endif %}' href='{{ item.get_url() }}'>{{ item.name }}</a>
+      </li>
+    {% endif %}
+  {% endfor %}
+{% endmacro %}
+
+{% block page_body %}
+  <header class='nav'>
+    <div class='brand'><a href='{{ url_for('home') }}'>ACME University</a></div>
+    <nav>
+      {% if current_user.is_authenticated %}
+        <span class='pill'>{{ current_user.username }} ({{ current_user.role }})</span>
+        <a href='{{ admin_view.admin.url }}'>Admin</a>
+        <a class='btn' href='{{ url_for('auth.logout') }}'>Logout</a>
+      {% else %}
+        <a href='{{ url_for('auth.login') }}'>Login</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class='flash container'>
+        {% for category, message in messages %}
+          <div class='flash-item {{ category }}'>{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class='admin-shell'>
+    <aside class='card admin-menu'>
+      <h2 class='muted'>Manage</h2>
+      <ul class='list'>
+        {{ flattened_menu(admin_view.admin.menu()) }}
+      </ul>
+    </aside>
+    <section class='card admin-content'>
+      {% set render_ctx = h.resolve_ctx() %}
+      {% block body %}{% endblock %}
+    </section>
+  </main>
+{% endblock %}
+
+{% block tail_js %}
+  {{ super() }}
+{% endblock %}
