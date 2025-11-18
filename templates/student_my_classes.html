@@ -5,5 +5,5 @@
 {% for e in enrollments %}<tr><td>{{ e.course.code }}</td><td>{{ e.course.title }}</td><td>{{ e.grade or '-' }}</td></tr>{% endfor %}
 </tbody></table>
 {% else %}<p class='muted'>You are not enrolled in any classes.</p>{% endif %}
-<p><a class='btn' href='{{ url_for('student_all_classes') }}'>See All Classes</a></p>
+<p><a class='btn' href='{{ url_for('student.all_classes') }}'>See All Classes</a></p>
 {% endblock %}

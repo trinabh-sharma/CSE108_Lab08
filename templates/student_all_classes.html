@@ -9,7 +9,7 @@
   <td>{{ c.capacity }}</td><td>{{ cnt }}</td>
   <td>
     {% if current_user.is_authenticated and current_user.role == 'student' %}
-      <form method='post' action='{{ url_for('student_enroll', course_id=c.id) }}'>
+      <form method='post' action='{{ url_for('student.enroll', course_id=c.id) }}'>
         <button type='submit' {% if cnt >= c.capacity %}disabled{% endif %}>
           {% if cnt >= c.capacity %}Full{% else %}Enroll{% endif %}
         </button>
