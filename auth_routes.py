@@ -1,35 +1,35 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, current_user
 
+from extensions import db
 from models import User
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for("home"))
 
-    if request.method == 'POST':
-        username = request.form.get('username', '').strip()
-        password = request.form.get('password', '')
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
-            flash('Welcome back!', 'success')
-            if user.role == 'student':
-                return redirect(url_for('student.my_classes'))
-            if user.role == 'teacher':
-                return redirect(url_for('teacher.dashboard'))
-            return redirect('/admin')
-        flash('Invalid username or password', 'error')
-    return render_template('login.html')
+            flash("Welcome back.", "success")
+            return redirect(url_for("home"))
+
+        flash("Invalid username or password.", "error")
+
+    return render_template("login.html")
 
 
-@auth_bp.route('/logout')
-@login_required
+@auth_bp.route("/logout")
 def logout():
-    logout_user()
-    flash('Logged out.', 'info')
-    return redirect(url_for('home'))
+    if current_user.is_authenticated:
+        logout_user()
+        flash("Logged out.", "info")
+    return redirect(url_for("auth.login"))

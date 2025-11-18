@@ -1,9 +1,17 @@
-{% extends 'base.html' %}{% block content %}
-<h1>Login</h1>
-<form method='post' class='card'>
-  <label>Username <input name='username' required></label>
-  <label>Password <input type='password' name='password' required></label>
-  <button type='submit'>Sign in</button>
-</form>
-<p class='muted'>Demo (after seeding): admin/admin · turing/teacher · hopper/teacher · alice/bob/charlie (student)</p>
+{% extends "base.html" %}
+{% block content %}
+  <h1>Login</h1>
+  <form method="post" class="card">
+    <label>Username
+      <input name="username" required>
+    </label>
+    <label>Password
+      <input type="password" name="password" required>
+    </label>
+    <button type="submit">Sign in</button>
+  </form>
+  <p class="muted">
+    Demo users (after seeding): admin/admin, turing/teacher, hopper/teacher,
+    alice/bob/charlie with password <code>student</code>.
+  </p>
 {% endblock %}

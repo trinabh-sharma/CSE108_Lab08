@@ -1,30 +1,33 @@
 from functools import wraps
 
-from flask import flash, redirect, url_for
+from flask import redirect, url_for, flash
 from flask_login import current_user
 
 from models import Course
 
 
 def roles_required(*roles):
-    """Ensure the logged in user has one of the supplied roles."""
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            if not current_user.is_authenticated or current_user.role not in roles:
+    def wrapper(fn):
+        @wraps(fn)
+        def inner(*args, **kwargs):
+            if not current_user.is_authenticated:
+                flash("Please log in first.", "error")
+                return redirect(url_for("auth.login"))
+            if current_user.role not in roles:
                 flash("Access denied.", "error")
-                return redirect(url_for('auth.login'))
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
+                return redirect(url_for("home"))
+            return fn(*args, **kwargs)
+
+        return inner
+
+    return wrapper
 
 
-def owns_course_or_admin(course_id):
-    """Return True if the current user owns the course or is an admin."""
+def owns_course_or_admin(course_id: int) -> bool:
     if not current_user.is_authenticated:
         return False
-    if current_user.role == 'admin':
+    if current_user.role == "admin":
         return True
-    if current_user.role != 'teacher':
+    if current_user.role != "teacher":
         return False
-    return bool(Course.query.filter_by(id=course_id, teacher_id=current_user.id).first())
+    return Course.query.filter_by(id=course_id, teacher_id=current_user.id).first() is not None

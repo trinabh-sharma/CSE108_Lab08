@@ -1,5 +1,15 @@
-{% extends 'base.html' %}{% block content %}
-<section class='hero'><h1>Student Enrollment Web App</h1>
-<p class='muted'>Login as student, teacher, or admin to explore features.</p>
-<a class='btn' href='{{ url_for('auth.login') }}'>Get Started</a></section>
+{% extends "base.html" %}
+{% block content %}
+  <section class="hero">
+    <h1>Student Enrollment Web App</h1>
+    {% if current_user.is_authenticated %}
+      <p class="muted">
+        You are logged in as {{ current_user.username }} ({{ current_user.role }}).
+        Use the navigation bar to go to your dashboard.
+      </p>
+    {% else %}
+      <p class="muted">Please log in to continue.</p>
+      <a class="btn" href="{{ url_for('auth.login') }}">Login</a>
+    {% endif %}
+  </section>
 {% endblock %}

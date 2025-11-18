@@ -1,20 +1,17 @@
-{% extends 'base.html' %}{% block content %}
-<h1>Your Courses</h1>
-{% if courses %}
-<table>
-<thead><tr><th>Code</th><th>Title</th><th>Capacity</th><th>Enrolled</th><th>Action</th></tr></thead>
-<tbody>
-{% for c in courses %}
-{% set cnt = counts.get(c.id, 0) %}
-<tr>
-  <td>{{ c.code }}</td>
-  <td>{{ c.title }}</td>
-  <td>{{ c.capacity }}</td>
-  <td>{{ cnt }}</td>
-  <td><a class='btn' href='{{ url_for('teacher.course', course_id=c.id) }}'>View Roster</a></td>
-</tr>
-{% endfor %}
-</tbody>
-</table>
-{% else %}<p class='muted'>No assigned courses.</p>{% endif %}
+{% extends "base.html" %}
+{% block content %}
+  <h1>Your Courses</h1>
+  {% if courses %}
+    <ul class="list">
+    {% for c in courses %}
+      <li>
+        <a class="btn" href="{{ url_for('teacher.course', course_id=c.id) }}">
+          {{ c.code }} — {{ c.title }}
+        </a>
+      </li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">No assigned courses.</p>
+  {% endif %}
 {% endblock %}

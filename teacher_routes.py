@@ -1,50 +1,51 @@
-from flask import Blueprint, render_template, abort, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from flask_login import login_required, current_user
-from sqlalchemy import func
 
-from decorators import roles_required, owns_course_or_admin
 from extensions import db
 from models import Course, Enrollment
+from decorators import roles_required, owns_course_or_admin
 
-teacher_bp = Blueprint('teacher', __name__, url_prefix='/teacher')
+teacher_bp = Blueprint("teacher", __name__, url_prefix="/teacher")
 
 
-@teacher_bp.route('/')
-@teacher_bp.route('')
+@teacher_bp.route("/")
 @login_required
-@roles_required('teacher')
+@roles_required("teacher", "admin")
 def dashboard():
-    courses = Course.query.filter_by(teacher_id=current_user.id).order_by(Course.code).all()
-    # Get enrollment counts for each course
-    counts = dict(
-        db.session.query(Enrollment.course_id, func.count(Enrollment.id))
-        .group_by(Enrollment.course_id)
-        .all()
-    )
-    return render_template('teacher_dashboard.html', courses=courses, counts=counts)
+    if current_user.role == "admin":
+        courses = Course.query.order_by(Course.code).all()
+    else:
+        courses = Course.query.filter_by(teacher_id=current_user.id).order_by(Course.code).all()
+    return render_template("teacher_dashboard.html", courses=courses)
 
 
-@teacher_bp.route('/course/<int:course_id>')
+@teacher_bp.route("/course/<int:course_id>")
 @login_required
-@roles_required('teacher', 'admin')
-def course(course_id):
+@roles_required("teacher", "admin")
+def course(course_id: int):
     if not owns_course_or_admin(course_id):
         abort(403)
-    course_obj = Course.query.get_or_404(course_id)
+
+    course = Course.query.get_or_404(course_id)
     roster = Enrollment.query.filter_by(course_id=course_id).all()
-    return render_template('teacher_course.html', course=course_obj, roster=roster)
+    return render_template("teacher_course.html", course=course, roster=roster)
 
 
-@teacher_bp.route('/course/<int:course_id>/grade', methods=['POST'])
+@teacher_bp.route("/course/<int:course_id>/grade", methods=["POST"])
 @login_required
-@roles_required('teacher', 'admin')
-def grade(course_id):
+@roles_required("teacher", "admin")
+def update_grade(course_id: int):
     if not owns_course_or_admin(course_id):
         abort(403)
-    student_id = int(request.form['student_id'])
-    grade_value = request.form.get('grade', '').strip() or None
-    enrollment = Enrollment.query.filter_by(course_id=course_id, student_id=student_id).first_or_404()
-    enrollment.grade = grade_value
+
+    student_id = int(request.form["student_id"])
+    grade = request.form.get("grade", "").strip()
+
+    enrollment = Enrollment.query.filter_by(
+        course_id=course_id, student_id=student_id
+    ).first_or_404()
+    enrollment.grade = grade or None
     db.session.commit()
-    flash('Grade updated.', 'success')
-    return redirect(url_for('teacher.course', course_id=course_id))
+
+    flash("Grade updated.", "success")
+    return redirect(url_for("teacher.course", course_id=course_id))

@@ -1,9 +1,22 @@
-{% extends 'base.html' %}{% block content %}
-<h1>My Classes</h1>
-{% if enrollments %}
-<table><thead><tr><th>Code</th><th>Title</th><th>Grade</th></tr></thead><tbody>
-{% for e in enrollments %}<tr><td>{{ e.course.code }}</td><td>{{ e.course.title }}</td><td>{{ e.grade or '-' }}</td></tr>{% endfor %}
-</tbody></table>
-{% else %}<p class='muted'>You are not enrolled in any classes.</p>{% endif %}
-<p><a class='btn' href='{{ url_for('student.all_classes') }}'>See All Classes</a></p>
+{% extends "base.html" %}
+{% block content %}
+  <h1>My Classes</h1>
+  {% if enrollments %}
+    <table>
+      <thead>
+        <tr><th>Code</th><th>Title</th><th>Grade</th></tr>
+      </thead>
+      <tbody>
+      {% for e in enrollments %}
+        <tr>
+          <td>{{ e.course.code }}</td>
+          <td>{{ e.course.title }}</td>
+          <td>{{ e.grade or "-" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">You are not enrolled in any classes.</p>
+  {% endif %}
 {% endblock %}
