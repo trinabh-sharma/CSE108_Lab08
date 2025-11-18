@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from sqlalchemy import func
 
 from decorators import roles_required, owns_course_or_admin
 from extensions import db
@@ -14,7 +15,13 @@ teacher_bp = Blueprint('teacher', __name__, url_prefix='/teacher')
 @roles_required('teacher')
 def dashboard():
     courses = Course.query.filter_by(teacher_id=current_user.id).order_by(Course.code).all()
-    return render_template('teacher_dashboard.html', courses=courses)
+    # Get enrollment counts for each course
+    counts = dict(
+        db.session.query(Enrollment.course_id, func.count(Enrollment.id))
+        .group_by(Enrollment.course_id)
+        .all()
+    )
+    return render_template('teacher_dashboard.html', courses=courses, counts=counts)
 
 
 @teacher_bp.route('/course/<int:course_id>')

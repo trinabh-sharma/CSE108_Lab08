@@ -31,9 +31,45 @@ class AdminOnlyModelView(ModelView):
         return redirect(url_for('auth.login'))
 
 
+class UserModelView(AdminOnlyModelView):
+    column_list = ['id', 'username', 'role']
+    column_searchable_list = ['username', 'role']
+    column_filters = ['role']
+    form_columns = ['username', 'password_hash', 'role']
+    can_create = True
+    can_edit = True
+    can_delete = True
+
+
+class CourseModelView(AdminOnlyModelView):
+    column_list = ['id', 'code', 'title', 'capacity', 'teacher']
+    column_searchable_list = ['code', 'title']
+    column_filters = ['teacher_id']
+    form_columns = ['code', 'title', 'capacity', 'teacher']
+    can_create = True
+    can_edit = True
+    can_delete = True
+
+
+class EnrollmentModelView(AdminOnlyModelView):
+    column_list = ['id', 'student', 'course', 'grade']
+    column_searchable_list = ['grade']
+    column_filters = ['student_id', 'course_id']
+    form_columns = ['student', 'course', 'grade']
+    can_create = True
+    can_edit = True
+    can_delete = True
+
+
 def init_admin(app):
-    admin = Admin(app, name='Admin Panel', template_mode='bootstrap3')
-    admin.add_view(AdminOnlyModelView(User, db.session))
-    admin.add_view(AdminOnlyModelView(Course, db.session))
-    admin.add_view(AdminOnlyModelView(Enrollment, db.session))
+    admin = Admin(
+        app, 
+        name='Admin Panel', 
+        template_mode='bootstrap3', 
+        url='/admin',
+        base_template='admin/custom_base.html'
+    )
+    admin.add_view(UserModelView(User, db.session, name='Users', endpoint='admin_users'))
+    admin.add_view(CourseModelView(Course, db.session, name='Courses', endpoint='admin_courses'))
+    admin.add_view(EnrollmentModelView(Enrollment, db.session, name='Enrollments', endpoint='admin_enrollments'))
     return admin
